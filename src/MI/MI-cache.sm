@@ -1,0 +1,315 @@
+
+
+machine(MachineType:L1Cache, "MI cache")
+    : Sequencer *sequencer;
+      CacheMemory *cacheMemory;
+      bool send_evictions;
+
+      MessageBuffer * requestToDir, network="To", virtual_network="0",
+            vnet_type="request";
+      MessageBuffer * responseToDirOrSibling, network="To", virtual_network="2",
+            vnet_type="response";
+
+      MessageBuffer * forwardFromDir, network="From", virtual_network="1",
+            vnet_type="forward";
+      MessageBuffer * responseFromDirOrSibling, network="From",
+            virtual_network="2", vnet_type="response";
+
+      MessageBuffer * mandatoryQueue;
+{
+    state_declaration(State, desc="Cache states") {
+        I, AccessPermission:Invalid, desc="Not present/Invalid";
+        IM_L, AccessPermission:Invalid, desc="Invalid, moving to M, waiting for data for load";
+        IM_S, AccessPermission:Invalid, desc="Invalid, moving to M, waiting for data for store";
+        M, AccessPermission:Read_Write, desc="Modified, R&W permissions, owner";
+        MI, AccessPermission:Busy, desc="Modified releasing ownership, waiting for ack";
+    }
+
+    enumeration(Event, desc="Cache events") {
+        Load, desc="Load from CPU core";
+        Store, desc="Load from CPU core";
+        Replacement, desc="Replace this cache block";
+        FwdGetM, desc="Forwarded GetM from dir";
+        PutAck, desc="Response from dir that the put finished";
+        DataDir, desc="Data from directory (acks = 0)";
+        DataOwner, desc="Data from owner";
+    }
+
+    structure(Entry, desc="Cache entry", interface="AbstractCacheEntry") {
+        State CacheState, desc="cache state";
+        DataBlock DataBlk, desc="Data in the block";
+    }
+
+    Tick clockEdge();
+
+    void set_cache_entry(AbstractCacheEntry a);
+    void unset_cache_entry();
+
+    MachineID mapAddressToMachine(Addr addr, MachineType mtype);
+
+    Entry getCacheEntry(Addr address), return_by_pointer="yes" {
+        return static_cast(Entry, "pointer", cacheMemory.lookup(address));
+    }
+
+    State getState(Entry cache_entry, Addr addr) {
+        if (is_valid(cache_entry)) { return cache_entry.CacheState; }
+        else { return State:I; }
+    }
+
+    void setState(Entry cache_entry, Addr addr, State state) {
+        if (is_valid(cache_entry)) { cache_entry.CacheState := state; }
+    }
+
+    AccessPermission getAccessPermission(Addr addr) {
+        Entry cache_entry := getCacheEntry(addr);
+        if(is_valid(cache_entry)) {
+            return L1Cache_State_to_permission(cache_entry.CacheState);
+        }
+
+        return AccessPermission:NotPresent;
+    }
+
+    void setAccessPermission(Entry cache_entry, Addr addr, State state) {
+        if (is_valid(cache_entry)) {
+            cache_entry.changePermission(L1Cache_State_to_permission(state));
+        }
+    }
+
+    void functionalRead(Addr addr, Packet *pkt) {
+        testAndRead(addr, getCacheEntry(addr).DataBlk, pkt);
+    }
+
+    int functionalWrite(Addr addr, Packet *pkt) {
+        if (testAndWrite(addr, getCacheEntry(addr).DataBlk, pkt)) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    out_port(request_out, RequestMsg, requestToDir);
+    out_port(response_out, ResponseMsg, responseToDirOrSibling);
+
+    in_port(response_in, ResponseMsg, responseFromDirOrSibling) {
+        if (response_in.isReady(clockEdge())) {
+            peek(response_in, ResponseMsg) {
+                Entry cache_entry := getCacheEntry(in_msg.addr);
+
+                if (machineIDToMachineType(in_msg.Sender) ==
+                            MachineType:Directory) {
+                    if (in_msg.Type != CoherenceResponseType:Data) {
+                        error("Directory should only reply with data");
+                    }
+
+                    trigger(Event:DataDir, in_msg.addr, cache_entry);
+                } else {
+                    assert(in_msg.Type == CoherenceResponseType:Data);
+
+                    trigger(Event:DataOwner, in_msg.addr, cache_entry);
+                }
+            }
+        }
+    }
+
+    in_port(forward_in, RequestMsg, forwardFromDir) {
+        if (forward_in.isReady(clockEdge())) {
+            peek(forward_in, RequestMsg) {
+                Entry cache_entry := getCacheEntry(in_msg.addr);
+
+                if (in_msg.Type == CoherenceRequestType:GetM) {
+                    trigger(Event:FwdGetM, in_msg.addr, cache_entry);
+                } else if (in_msg.Type == CoherenceRequestType:PutAck) {
+                    trigger(Event:PutAck, in_msg.addr, cache_entry);
+                } else {
+                    error("Unexpected forward message!");
+                }
+            }
+        }
+    }
+
+    in_port(mandatory_in, RubyRequest, mandatoryQueue) {
+        if (mandatory_in.isReady(clockEdge())) {
+            peek(mandatory_in, RubyRequest, block_on="LineAddress") {
+                Entry cache_entry := getCacheEntry(in_msg.LineAddress);
+                if (is_invalid(cache_entry) &&
+                        cacheMemory.cacheAvail(in_msg.LineAddress) == false ) {
+                    Addr addr := cacheMemory.cacheProbe(in_msg.LineAddress);
+                    Entry victim_entry := getCacheEntry(addr);
+                    trigger(Event:Replacement, addr, victim_entry);
+                } else {
+                    if (in_msg.Type == RubyRequestType:LD ||
+                            in_msg.Type == RubyRequestType:IFETCH) {
+                        trigger(Event:Load, in_msg.LineAddress, cache_entry);
+                    } else if (in_msg.Type == RubyRequestType:ST) {
+                        trigger(Event:Store, in_msg.LineAddress, cache_entry);
+                    } else {
+                        error("Unexpected type from processor");
+                    }
+                }
+            }
+        }
+    }
+
+    action(sendGetM, "gM", desc="Send GetM to the directory") {
+        enqueue(request_out, RequestMsg, 1) {
+            out_msg.addr := address;
+            out_msg.Type := CoherenceRequestType:GetM;
+            out_msg.Destination.add(mapAddressToMachine(address,
+                                    MachineType:Directory));
+            out_msg.MessageSize := MessageSizeType:Control;
+            out_msg.Requestor := machineID;
+        }
+    }
+
+    action(sendPutM, "pM", desc="Send putM+data to the directory") {
+        enqueue(request_out, RequestMsg, 1) {
+            out_msg.addr := address;
+            out_msg.Type := CoherenceRequestType:PutM;
+            out_msg.Destination.add(mapAddressToMachine(address,
+                                    MachineType:Directory));
+            out_msg.DataBlk := cache_entry.DataBlk;
+            out_msg.MessageSize := MessageSizeType:Data;
+            out_msg.Requestor := machineID;
+        }
+    }
+
+    action(sendCacheDataToReq, "cdR", desc="Send cache data to requestor") {
+        assert(is_valid(cache_entry));
+        peek(forward_in, RequestMsg) {
+            enqueue(response_out, ResponseMsg, 1) {
+                out_msg.addr := address;
+                out_msg.Type := CoherenceResponseType:Data;
+                out_msg.Destination.add(in_msg.Requestor);
+                out_msg.DataBlk := cache_entry.DataBlk;
+                out_msg.MessageSize := MessageSizeType:Data;
+                out_msg.Sender := machineID;
+            }
+        }
+    }
+
+    action(loadHit, "Lh", desc="Load hit") {
+        assert(is_valid(cache_entry));
+        cacheMemory.setMRU(cache_entry);
+        sequencer.readCallback(address, cache_entry.DataBlk, false);
+    }
+
+    action(externalLoadHit, "xLh", desc="External load hit (was a miss)") {
+        assert(is_valid(cache_entry));
+        peek(response_in, ResponseMsg) {
+            cacheMemory.setMRU(cache_entry);
+            sequencer.readCallback(address, cache_entry.DataBlk, true,
+                                   machineIDToMachineType(in_msg.Sender));
+        }
+    }
+
+    action(storeHit, "Sh", desc="Store hit") {
+        assert(is_valid(cache_entry));
+        cacheMemory.setMRU(cache_entry);
+        sequencer.writeCallback(address, cache_entry.DataBlk, false);
+    }
+
+    action(externalStoreHit, "xSh", desc="External store hit (was a miss)") {
+        assert(is_valid(cache_entry));
+        peek(response_in, ResponseMsg) {
+            cacheMemory.setMRU(cache_entry);
+            sequencer.writeCallback(address, cache_entry.DataBlk, true,
+                                    machineIDToMachineType(in_msg.Sender));
+        }
+    }
+
+    action(forwardEviction, "e", desc="sends eviction notification to CPU") {
+        if (send_evictions) {
+            sequencer.evictionCallback(address);
+        }
+    }
+
+    action(allocateCacheBlock, "a", desc="Allocate a cache block") {
+        assert(is_invalid(cache_entry));
+        assert(cacheMemory.cacheAvail(address));
+        set_cache_entry(cacheMemory.allocate(address, new Entry));
+    }
+
+    action(deallocateCacheBlock, "d", desc="Deallocate a cache block") {
+        assert(is_valid(cache_entry));
+        cacheMemory.deallocate(address);
+        unset_cache_entry();
+    }
+
+    action(writeDataToCache, "wd", desc="Write data to the cache") {
+        peek(response_in, ResponseMsg) {
+            assert(is_valid(cache_entry));
+            cache_entry.DataBlk := in_msg.DataBlk;
+        }
+    }
+
+    action(popMandatoryQueue, "pQ", desc="Pop the mandatory queue") {
+        mandatory_in.dequeue(clockEdge());
+    }
+
+    action(popResponseQueue, "pR", desc="Pop the response queue") {
+        response_in.dequeue(clockEdge());
+    }
+
+    action(popForwardQueue, "pF", desc="Pop the forward queue") {
+        forward_in.dequeue(clockEdge());
+    }
+
+    action(stall, "z", desc="Stall the incoming request") {}
+
+    transition(I, Load, IM_L) {
+        allocateCacheBlock;
+        sendGetM;
+        popMandatoryQueue;
+    }
+
+    transition(I, Store, IM_S) {
+        allocateCacheBlock;
+        sendGetM;
+        popMandatoryQueue;
+    }
+
+    transition({IM_L, IM_S}, {Load, Store, Replacement}) {
+        stall;
+    }
+
+    transition(IM_L, {DataDir, DataOwner}, M) {
+        writeDataToCache;
+        externalLoadHit;
+        popResponseQueue;
+    }
+
+    transition(IM_S, {DataDir, DataOwner}, M) {
+        writeDataToCache;
+        externalStoreHit;
+        popResponseQueue;
+    }
+
+    transition(M, Load) {
+        loadHit;
+        popMandatoryQueue;
+    }
+
+    transition(M, Store) {
+        storeHit;
+        popMandatoryQueue;
+    }
+
+    transition(M, Replacement, MI) {
+        sendPutM;
+    }
+
+    transition(M, FwdGetM, I) {
+        sendCacheDataToReq;
+        deallocateCacheBlock;
+        popForwardQueue;
+    }
+
+    transition(MI, {Load, Store, Replacement}) {
+        stall;
+    }
+
+    transition(MI, PutAck, I) {
+        deallocateCacheBlock;
+        popForwardQueue;
+    }
+}

@@ -1,0 +1,5 @@
+protocol "MI";
+include "RubySlicc_interfaces.slicc";
+include "MI-msg.sm";
+include "MI-cache.sm";
+include "MI-dir.sm";

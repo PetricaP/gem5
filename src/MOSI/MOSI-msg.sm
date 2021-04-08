@@ -1,19 +1,20 @@
 
+
 enumeration(CoherenceRequestType, desc="Types of request messages") {
     GetS,       desc="Request from cache for a block with read permission";
     GetM,       desc="Request from cache for a block with write permission";
     PutS,       desc="Sent to directory when evicting a block in S (clean WB)";
     PutM,       desc="Sent to directory when evicting a block in M";
-    PutE,       desc="Sent to directory when evicting a block in E";
+    PutO,       desc="Sent to directory when evicting a block in O";
 
     Inv,        desc="Probe the cache and invalidate any matching blocks";
     PutAck,     desc="The put request has been processed.";
 }
 
 enumeration(CoherenceResponseType, desc="Types of response messages") {
-    Data,          desc="Contains the most up-to-date data";
-    DataExclusive, desc="Contains the most up-to-date data: sent to exclusive owner";
-    InvAck,        desc="Message from another cache that they have inv. the blk";
+    Data,       desc="Contains the most up-to-date data";
+    InvAck,     desc="Message from another cache that they have inv. the blk";
+    AckCount,   desc="Contains ack-count for new owner of the block";
 }
 
 structure(RequestMsg, desc="Used for Cache->Dir and Fwd messages",
@@ -24,6 +25,7 @@ structure(RequestMsg, desc="Used for Cache->Dir and Fwd messages",
     NetDest Destination,         desc="Multicast destination mask";
     DataBlock DataBlk,           desc="data for the cache line";
     MessageSizeType MessageSize, desc="size category of the message";
+    int Acks,                    desc="acks for FwdGetM to owner";
 
     bool functionalRead(Packet *pkt) {
         return false;

@@ -1,0 +1,5 @@
+protocol "MOSI";
+include "RubySlicc_interfaces.slicc";
+include "MOSI-msg.sm";
+include "MOSI-cache.sm";
+include "MOSI-dir.sm";

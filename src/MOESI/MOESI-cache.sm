@@ -1,36 +1,64 @@
 
+machine(MachineType:L1Cache, "MSI cache")
+    : Sequencer *sequencer;
+      CacheMemory *cacheMemory;
+      bool send_evictions;
 
-machine(MachineType:L1Cache, "MESI cache")
-    :
-    Sequencer *sequencer;
-    CacheMemory *cacheMemory;
-    bool send_evictions;
+      MessageBuffer * requestToDir, network="To", virtual_network="0",
+            vnet_type="request";
+      MessageBuffer * responseToDirOrSibling, network="To", virtual_network="2",
+            vnet_type="response";
 
-    MessageBuffer *requestToDir, network="To", virtual_network="0", vnet_type="request";
-    MessageBuffer *responseToDirOrSibling, network="To", virtual_network="2", vnet_type="response";
+      MessageBuffer * forwardFromDir, network="From", virtual_network="1",
+            vnet_type="forward";
+      MessageBuffer * responseFromDirOrSibling, network="From",
+            virtual_network="2", vnet_type="response";
 
-    MessageBuffer *forwardFromDir, network="From", virtual_network="1", vnet_type="forward";
-    MessageBuffer * responseFromDirOrSibling, network="From", virtual_network="2", vnet_type="response";
-
-    MessageBuffer *mandatoryQueue;
+      MessageBuffer * mandatoryQueue;
 {
     state_declaration(State, desc="Cache states") {
-        I,      AccessPermission:Invalid, desc="Not present/Invalid";
-        IS_D,   AccessPermission:Invalid, desc="Invalid, moving to S, waiting for data";
-        IM_AD,  AccessPermission:Invalid, desc="Invalid, moving to M, waiting for acks and data";
-        IM_A,   AccessPermission:Busy, desc="Invalid, moving to M, waiting for acks";
+        I,      AccessPermission:Invalid,
+                    desc="Not present/Invalid";
 
-        S,      AccessPermission:Read_Only, desc="Shared. Read-only, other caches may have the block";
-        SM_AD,  AccessPermission:Read_Only, desc="Shared, moving to M, waiting for acks and 'data'";
-        SM_A,   AccessPermission:Read_Only, desc="Shared, moving to M, waiting for acks";
+        IS_D,   AccessPermission:Invalid,
+                    desc="Invalid, moving to S, waiting for data";
+        IM_AD,  AccessPermission:Invalid,
+                    desc="Invalid, moving to M, waiting for acks and data";
+        IM_A,   AccessPermission:Busy,
+                    desc="Invalid, moving to M, waiting for acks";
 
-        E,      AccessPermission:Read_Write, desc="Exclusive, on write is silently upgraded to M";
-        EI_A,   AccessPermission:Busy, desc="Exclusive going to invalidate, waiting for put ack";
+        S,      AccessPermission:Read_Only,
+                    desc="Shared. Read-only, other caches may have the block";
 
-        M,      AccessPermission:Read_Write, desc="Modified. Read & write permissions. Owner of block";
-        MI_A,   AccessPermission:Busy, desc="Was modified, moving to I, waiting for put ack";
-        SI_A,   AccessPermission:Busy, desc="Was shared, moving to I, waiting for put ack";
-        II_A,   AccessPermission:Invalid, desc="Sent valid data before receiving put ack. ";
+        SM_AD,  AccessPermission:Read_Only,
+                    desc="Shared, moving to M, waiting for acks and 'data'";
+        SM_A,   AccessPermission:Read_Only,
+                    desc="Shared, moving to M, waiting for acks";
+
+        E,      AccessPermission:Read_Only,
+                    desc="Exclusive, on write is silently upgraded to M";
+
+        O,      AccessPermission:Read_Only,
+                    desc="Owned, the current cache is the owner";
+
+        OM_AC,  AccessPermission:Read_Only,
+                    desc="Owned, moving to M, waiting for ack count and inv acks";
+        OM_A,   AccessPermission:Read_Only,
+                    desc="Owned, moving to M, waiting for inv acks";
+
+        M,      AccessPermission:Read_Write,
+                    desc="Modified. Read & write permissions. Owner of block";
+
+        MI_A,   AccessPermission:Busy,
+                    desc="Was modified, moving to I, waiting for put ack";
+        SI_A,   AccessPermission:Busy,
+                    desc="Was shared, moving to I, waiting for put ack";
+        EI_A,   AccessPermission:Busy,
+                    desc="Was exclusive, moving to I, waiting for put ack";
+        OI_A,   AccessPermission:Busy,
+                    desc="Was owned, moving to I, waiting for put ack";
+        II_A,   AccessPermission:Invalid,
+                    desc="Sent valid data before receiving put ack. ";
     }
 
     enumeration(Event, desc="Cache events") {
@@ -44,11 +72,13 @@ machine(MachineType:L1Cache, "MESI cache")
         Inv,            desc="Invalidate from the directory.";
         PutAck,         desc="Response from directory after we issue a put. ";
 
+        DataExclusive,  desc="Data from directory with exclusive access";
         DataDirNoAcks,  desc="Data from directory (acks = 0)";
         DataDirAcks,    desc="Data from directory (acks > 0)";
-        DataExclusive,  desc="Data from directory with exclusive access";
+        AckCountDir,    desc="Count of expected acks from dir";
 
-        DataOwner,      desc="Data from owner";
+        DataOwnerNoAcks,desc="Data from owner (acks = 0)";
+        DataOwnerAcks,  desc="Data from owner (acks > 0)";
         InvAck,         desc="Invalidation ack from other cache after Inv";
 
         LastInvAck,     desc="Triggered after the last ack is received";
@@ -153,28 +183,35 @@ machine(MachineType:L1Cache, "MESI cache")
             peek(response_in, ResponseMsg) {
                 Entry cache_entry := getCacheEntry(in_msg.addr);
                 TBE tbe := TBEs[in_msg.addr];
+                DPRINTF(RubySlicc, "Mor aici pe loc %s eu %s mesaj %s from %s\n", in_msg.addr, machineID, in_msg.Type, in_msg.Sender);
                 assert(is_valid(tbe));
 
-                if (machineIDToMachineType(in_msg.Sender) ==
-                            MachineType:Directory) {
+                if (machineIDToMachineType(in_msg.Sender) == MachineType:Directory) {
                     if (in_msg.Type == CoherenceResponseType:Data) {
                         assert(in_msg.Acks + tbe.AcksOutstanding >= 0);
                         if (in_msg.Acks + tbe.AcksOutstanding == 0) {
-                            trigger(Event:DataDirNoAcks, in_msg.addr, cache_entry,
-                                    tbe);
+                            trigger(Event:DataDirNoAcks, in_msg.addr, cache_entry, tbe);
                         } else {
-                            trigger(Event:DataDirAcks, in_msg.addr, cache_entry,
-                                    tbe);
+                            trigger(Event:DataDirAcks, in_msg.addr, cache_entry, tbe);
                         }
                     } else if (in_msg.Type == CoherenceResponseType:DataExclusive) {
                         trigger(Event:DataExclusive, in_msg.addr, cache_entry, tbe);
                     } else {
-                        error("Directory should only reply with data");
+                        assert(in_msg.Type == CoherenceResponseType:AckCount);
+                        if (in_msg.Acks + tbe.AcksOutstanding == 0) {
+                            DPRINTF(RubySlicc, "Aici am deja %s si trebuie sa mai vina %s\n", tbe.AcksOutstanding, in_msg.Acks);
+                            trigger(Event:LastInvAck, in_msg.addr, cache_entry, tbe);
+                        } else {
+                            trigger(Event:AckCountDir, in_msg.addr, cache_entry, tbe);
+                        }
                     }
                 } else {
                     if (in_msg.Type == CoherenceResponseType:Data) {
-                        trigger(Event:DataOwner, in_msg.addr, cache_entry,
-                                tbe);
+                        if (in_msg.Acks + tbe.AcksOutstanding == 0) {
+                            trigger(Event:DataOwnerNoAcks, in_msg.addr, cache_entry, tbe);
+                        } else {
+                            trigger(Event:DataOwnerAcks, in_msg.addr, cache_entry, tbe);
+                        }
                     } else if (in_msg.Type == CoherenceResponseType:InvAck) {
                         DPRINTF(RubySlicc, "Got inv ack. %d left\n",
                                 tbe.AcksOutstanding);
@@ -198,6 +235,9 @@ machine(MachineType:L1Cache, "MESI cache")
             peek(forward_in, RequestMsg) {
                 Entry cache_entry := getCacheEntry(in_msg.addr);
                 TBE tbe := TBEs[in_msg.addr];
+
+                DPRINTF(RubySlicc, "%s Received Inv from %s for %s\n", machineID, in_msg.Requestor,
+                        in_msg.addr);
 
                 if (in_msg.Type == CoherenceRequestType:GetS) {
                     trigger(Event:FwdGetS, in_msg.addr, cache_entry, tbe);
@@ -275,10 +315,21 @@ machine(MachineType:L1Cache, "MESI cache")
         }
     }
 
-    action(sendPutM, "pM", desc="Send putM+data to the directory") {
+    action(sendPutE, "pE", desc="Send putE + no data to the directory") {
         enqueue(request_out, RequestMsg, 1) {
             out_msg.addr := address;
-            out_msg.Type := CoherenceRequestType:PutM;
+            out_msg.Type := CoherenceRequestType:PutE;
+            out_msg.Destination.add(mapAddressToMachine(address, MachineType:Directory));
+            out_msg.MessageSize := MessageSizeType:Data;
+            out_msg.Requestor := machineID;
+        }
+    }
+
+    action(sendPutO, "pO", desc="Send putO+data to the directory") {
+        enqueue(request_out, RequestMsg, 1) {
+            DPRINTF(RubySlicc, "Sending PutO to dir\n");
+            out_msg.addr := address;
+            out_msg.Type := CoherenceRequestType:PutO;
             out_msg.Destination.add(mapAddressToMachine(address,
                                     MachineType:Directory));
             out_msg.DataBlk := cache_entry.DataBlk;
@@ -287,11 +338,13 @@ machine(MachineType:L1Cache, "MESI cache")
         }
     }
 
-    action(sendPutE, "pE", desc="Send putE + no data to the directory") {
+    action(sendPutM, "pM", desc="Send putM+data to the directory") {
         enqueue(request_out, RequestMsg, 1) {
             out_msg.addr := address;
-            out_msg.Type := CoherenceRequestType:PutE;
-            out_msg.Destination.add(mapAddressToMachine(address, MachineType:Directory));
+            out_msg.Type := CoherenceRequestType:PutM;
+            out_msg.Destination.add(mapAddressToMachine(address,
+                                    MachineType:Directory));
+            out_msg.DataBlk := cache_entry.DataBlk;
             out_msg.MessageSize := MessageSizeType:Data;
             out_msg.Requestor := machineID;
         }
@@ -325,6 +378,7 @@ machine(MachineType:L1Cache, "MESI cache")
 
     action(sendInvAcktoReq, "iaR", desc="Send inv-ack to requestor") {
         peek(forward_in, RequestMsg) {
+            DPRINTF(RubySlicc, "Sending Inv Ack for %s to %s\n", address, in_msg.Requestor);
             enqueue(response_out, ResponseMsg, 1) {
                 out_msg.addr := address;
                 out_msg.Type := CoherenceResponseType:InvAck;
@@ -430,8 +484,7 @@ machine(MachineType:L1Cache, "MESI cache")
         forward_in.dequeue(clockEdge());
     }
 
-    action(stall, "z", desc="Stall the incoming request") {
-    }
+    action(stall, "z", desc="Stall the incoming request") {}
 
 
     transition(I, Load, IS_D) {
@@ -452,14 +505,14 @@ machine(MachineType:L1Cache, "MESI cache")
         stall;
     }
 
-    transition(IS_D, {DataDirNoAcks, DataOwner}, S) {
+    transition(IS_D, DataExclusive, E) {
         writeDataToCache;
         deallocateTBE;
         externalLoadHit;
         popResponseQueue;
     }
 
-    transition(IS_D, DataExclusive, E) {
+    transition(IS_D, {DataDirNoAcks, DataOwnerNoAcks}, S) {
         writeDataToCache;
         deallocateTBE;
         externalLoadHit;
@@ -470,31 +523,31 @@ machine(MachineType:L1Cache, "MESI cache")
         stall;
     }
 
-    transition({IM_AD, SM_AD}, {DataDirNoAcks, DataOwner}, M) {
+    transition({IM_AD, SM_AD}, {DataDirNoAcks, DataOwnerNoAcks}, M) {
         writeDataToCache;
         deallocateTBE;
         externalStoreHit;
         popResponseQueue;
     }
 
-    transition(IM_AD, DataDirAcks, IM_A) {
+    transition(IM_AD, {DataDirAcks, DataOwnerAcks}, IM_A) {
         writeDataToCache;
         storeAcks;
         popResponseQueue;
     }
 
-    transition({IM_AD, IM_A, SM_AD, SM_A}, InvAck) {
+    transition({IM_AD, IM_A, SM_AD, SM_A, OM_AC, OM_A}, InvAck) {
         decrAcks;
         popResponseQueue;
     }
 
-    transition({IM_A, SM_A}, LastInvAck, M) {
+    transition({IM_A, SM_A, OM_A, OM_AC}, LastInvAck, M) {
         deallocateTBE;
         externalStoreHit;
         popResponseQueue;
     }
 
-    transition({S, SM_AD, SM_A, M, E}, Load) {
+    transition({S, E, SM_AD, SM_A, O, OM_AC, OM_A, M}, Load) {
         loadHit;
         popMandatoryQueue;
     }
@@ -516,7 +569,7 @@ machine(MachineType:L1Cache, "MESI cache")
         popForwardQueue;
     }
 
-    transition({SM_AD, SM_A}, {Store, Replacement, FwdGetS, FwdGetM}) {
+    transition({SM_AD, SM_A, OM_A}, {Store, Replacement, FwdGetS, FwdGetM}) {
         stall;
     }
 
@@ -531,6 +584,20 @@ machine(MachineType:L1Cache, "MESI cache")
         popResponseQueue;
     }
 
+    transition(O, Store, OM_AC) {
+        allocateTBE;
+        sendGetM;
+        popMandatoryQueue;
+    }
+
+    transition(O, Replacement, OI_A) {
+        sendPutO;
+    }
+
+    transition(OM_AC, {Store, Replacement}) {
+        stall;
+    }
+
     transition(M, Store) {
         storeHit;
         forwardEviction;
@@ -539,38 +606,6 @@ machine(MachineType:L1Cache, "MESI cache")
 
     transition(M, Replacement, MI_A) {
         sendPutM;
-    }
-
-    transition({M, E}, FwdGetS, S) {
-        sendCacheDataToReq;
-        sendCacheDataToDir;
-        popForwardQueue;
-    }
-
-    transition({M, E}, FwdGetM, I) {
-        sendCacheDataToReq;
-        deallocateCacheBlock;
-        popForwardQueue;
-    }
-
-    transition({MI_A, SI_A, II_A, EI_A}, {Load, Store, Replacement}) {
-        stall;
-    }
-
-    transition(MI_A, FwdGetS, SI_A) {
-        sendCacheDataToReq;
-        sendCacheDataToDir;
-        popForwardQueue;
-    }
-
-    transition({MI_A, EI_A}, FwdGetM, II_A) {
-        sendCacheDataToReq;
-        popForwardQueue;
-    }
-
-    transition({MI_A, EI_A, SI_A, II_A}, PutAck, I) {
-        deallocateCacheBlock;
-        popForwardQueue;
     }
 
     transition(E, Store, M) {
@@ -583,9 +618,48 @@ machine(MachineType:L1Cache, "MESI cache")
         sendPutE;
     }
 
-    transition(EI_A, FwdGetS, SI_A) {
+    transition({E, O, M}, FwdGetS, O) {
         sendCacheDataToReq;
-        sendCacheDataToDir;
+        popForwardQueue;
+    }
+
+    transition({E, O, M}, FwdGetM, I) {
+        sendCacheDataToReq;
+        deallocateCacheBlock;
+        popForwardQueue;
+    }
+
+    transition(OM_AC, FwdGetS) {
+        sendCacheDataToReq;
+        popForwardQueue;
+    }
+
+    transition(OM_AC, FwdGetM, IM_AD) {
+        sendCacheDataToReq;
+        popForwardQueue;
+    }
+
+    transition(OM_AC, AckCountDir, OM_A) {
+        storeAcks;
+        popResponseQueue;
+    }
+
+    transition({MI_A, OI_A, EI_A, SI_A, II_A}, {Load, Store, Replacement}) {
+        stall;
+    }
+
+    transition({OI_A, MI_A}, FwdGetS, OI_A) {
+        sendCacheDataToReq;
+        popForwardQueue;
+    }
+
+    transition({OI_A, MI_A}, FwdGetM, II_A) {
+        sendCacheDataToReq;
+        popForwardQueue;
+    }
+
+    transition({MI_A, OI_A, EI_A, SI_A, II_A}, PutAck, I) {
+        deallocateCacheBlock;
         popForwardQueue;
     }
 
@@ -594,3 +668,4 @@ machine(MachineType:L1Cache, "MESI cache")
         popForwardQueue;
     }
 }
+

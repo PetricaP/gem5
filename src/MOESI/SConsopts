@@ -1,0 +1,5 @@
+Import('*')
+
+all_protocols.extend(['MOESI'])
+
+protocol_dirs.append(str(Dir('.').abspath))

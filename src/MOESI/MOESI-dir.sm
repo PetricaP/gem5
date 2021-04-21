@@ -310,6 +310,7 @@ machine(MachineType:Directory, "Directory protocol")
     action(sendFwdGetM, "fM", desc="Send forward getM to owner") {
         assert(getDirectoryEntry(address).Owner.count() == 1);
         peek(request_in, RequestMsg) {
+            DPRINTF(RubySlicc, "Send fwd GetM from %s to %s\n", in_msg.Requestor, getDirectoryEntry(address).Owner);
             enqueue(forward_out, RequestMsg, 1) {
                 out_msg.addr := address;
                 out_msg.Type := CoherenceRequestType:GetM;
@@ -483,15 +484,15 @@ machine(MachineType:Directory, "Directory protocol")
 
     transition(O, GetMFromNonOwner, M) {
         removeReqFromSharers;
+        sendFwdGetM;
         clearOwner;
         setOwner;
         sendInvToSharers;
         clearSharers;
-        sendFwdGetM;
         popRequestQueue;
     }
 
-    transition(O, {PutSNotLast, PutSLast}) {
+    transition({O, O_m}, {PutSNotLast, PutSLast}) {
         removeReqFromSharers;
         sendPutAck;
         popRequestQueue;

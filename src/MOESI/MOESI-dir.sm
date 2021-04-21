@@ -482,12 +482,12 @@ machine(MachineType:Directory, "Directory protocol")
     }
 
     transition(O, GetMFromNonOwner, M) {
-        sendFwdGetM;
         removeReqFromSharers;
         clearOwner;
         setOwner;
         sendInvToSharers;
         clearSharers;
+        sendFwdGetM;
         popRequestQueue;
     }
 

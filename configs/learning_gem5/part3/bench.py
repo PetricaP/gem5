@@ -57,7 +57,8 @@ from optparse import OptionParser
 
 parser = OptionParser()
 parser.add_option('--bench', help="The name of the benchmark to run")
-parser.add_option('--ncpus', help="The number of cpus to use", default=16)
+parser.add_option('--ncpus', type=int, help="The number of cpus to use",
+                  default=4)
 
 (options, args) = parser.parse_args()
 
@@ -98,7 +99,8 @@ isa = str(m5.defines.buildEnv['TARGET_ISA']).lower()
 # Run application and use the compiled ISA to find the binary
 # grab the specific path to the binary
 thispath = os.path.dirname(os.path.realpath(__file__))
-binary = os.path.join(thispath, '../../../', 'tests/coremark-pro/builds/linux64/gcc64/bin/' + bench + '.exe')
+binary = os.path.join(thispath, '../../../',
+        'tests/coremark-pro/builds/linux64/gcc64/bin/' + bench + '.exe')
 
 # Create a process for a simple "multi-threaded" application
 process = Process()

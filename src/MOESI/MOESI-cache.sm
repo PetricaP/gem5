@@ -360,6 +360,7 @@ machine(MachineType:L1Cache, "MSI cache")
                 out_msg.DataBlk := cache_entry.DataBlk;
                 out_msg.MessageSize := MessageSizeType:Data;
                 out_msg.Sender := machineID;
+                out_msg.Acks := in_msg.Acks;
             }
         }
     }
@@ -578,7 +579,7 @@ machine(MachineType:L1Cache, "MSI cache")
         popForwardQueue;
     }
 
-    transition(SM_AD, DataDirAcks, SM_A) {
+    transition(SM_AD, {DataDirAcks, DataOwnerAcks}, SM_A) {
         writeDataToCache;
         storeAcks;
         popResponseQueue;

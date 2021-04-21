@@ -65,7 +65,7 @@ system.mem_mode = 'timing'               # Use timing accesses
 system.mem_ranges = [AddrRange('512MB')] # Create an address range
 
 # Create a pair of simple CPUs
-system.cpu = [TimingSimpleCPU() for i in range(2)]
+system.cpu = [TimingSimpleCPU() for i in range(4)]
 
 # Create a DDR3 memory controller and connect it to the membus
 system.mem_ctrl = MemCtrl()

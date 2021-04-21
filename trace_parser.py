@@ -13,14 +13,32 @@ class my_filter:
         return self._filter(l)
 
 
+def is_transition_line(l):
+    return l.startswith(' ' * 6) and l.strip()[0].isdigit()
+
+
 class basic_filter(my_filter):
     def __init__(self):
-        super().__init__(lambda l: l.startswith(' ' * 6) and l[6].isdigit())
+        super().__init__(is_transition_line)
 
 
 class addr_filter(my_filter):
     def __init__(self, addr):
         super().__init__(lambda l: int(l.split()[7][:-1], 0) == addr)
+
+
+def is_different_state(l):
+    return l.split()[4].split('>')[0] != l.split()[4].split('>')[1]
+
+
+class transition_filter(my_filter):
+    def __init__(self):
+        super().__init__(is_different_state)
+
+
+class cache_filter(my_filter):
+    def __init__(self, n):
+        super().__init__(lambda l: int(l.split()[1]) == n)
 
 
 def auto_int(x):
@@ -32,11 +50,21 @@ parser.add_argument('trace_path', help='Input trace file')
 parser.add_argument('-a', '--addr', type=auto_int, help='Address to monitor')
 parser.add_argument('-c', '--chunk_size', type=int, default=100,
                     help='Number of transitions to check')
+parser.add_argument('-t', '--transitions', action='store_true',
+                    help='Filter only transitions to different states')
+parser.add_argument('--cache', type=int,
+                    help='Filter only transitions from this cache')
 args = parser.parse_args()
 
 fltr = basic_filter()
 if args.addr:
     fltr = fltr.and_(addr_filter(args.addr))
+
+if args.transitions:
+    fltr = fltr.and_(transition_filter())
+
+if args.cache:
+    fltr = fltr.and_(cache_filter(args.cache))
 
 with FileReadBackwards(args.trace_path) as f:
     finished = False

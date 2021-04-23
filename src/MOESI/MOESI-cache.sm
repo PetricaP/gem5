@@ -651,12 +651,12 @@ machine(MachineType:L1Cache, "MSI cache")
         stall;
     }
 
-    transition({OI_A, MI_A}, FwdGetS, OI_A) {
+    transition({OI_A, MI_A, EI_A}, FwdGetS, OI_A) {
         sendCacheDataToReq;
         popForwardQueue;
     }
 
-    transition({OI_A, MI_A}, FwdGetM, II_A) {
+    transition({OI_A, MI_A, EI_A}, FwdGetM, II_A) {
         sendCacheDataToReq;
         popForwardQueue;
     }

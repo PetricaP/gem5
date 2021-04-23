@@ -23,6 +23,7 @@ machine(MachineType:L1Cache, "MI cache")
         IM_S, AccessPermission:Invalid, desc="Invalid, moving to M, waiting for data for store";
         M, AccessPermission:Read_Write, desc="Modified, R&W permissions, owner";
         MI, AccessPermission:Busy, desc="Modified releasing ownership, waiting for ack";
+        II, AccessPermission:Busy, desc="Modified releasing ownership sent data to new owner, waiting for ack";
     }
 
     enumeration(Event, desc="Cache events") {
@@ -284,6 +285,10 @@ machine(MachineType:L1Cache, "MI cache")
         popResponseQueue;
     }
 
+    transition({IM_L, IM_S}, FwdGetM) {
+        stall;
+    }
+
     transition(M, Load) {
         loadHit;
         popMandatoryQueue;
@@ -304,11 +309,16 @@ machine(MachineType:L1Cache, "MI cache")
         popForwardQueue;
     }
 
-    transition(MI, {Load, Store, Replacement}) {
+    transition({MI, II}, {Load, Store, Replacement}) {
         stall;
     }
 
-    transition(MI, PutAck, I) {
+    transition(MI, FwdGetM, II) {
+        sendCacheDataToReq;
+        popForwardQueue;
+    }
+
+    transition({II, MI}, PutAck, I) {
         deallocateCacheBlock;
         popForwardQueue;
     }

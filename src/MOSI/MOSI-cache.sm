@@ -228,14 +228,13 @@ machine(MachineType:L1Cache, "MSI cache")
                 Entry cache_entry := getCacheEntry(in_msg.addr);
                 TBE tbe := TBEs[in_msg.addr];
 
-                DPRINTF(RubySlicc, "%s Received Inv from %s for %s\n", machineID, in_msg.Requestor,
-                        in_msg.addr);
-
                 if (in_msg.Type == CoherenceRequestType:GetS) {
                     trigger(Event:FwdGetS, in_msg.addr, cache_entry, tbe);
                 } else if (in_msg.Type == CoherenceRequestType:GetM) {
                     trigger(Event:FwdGetM, in_msg.addr, cache_entry, tbe);
                 } else if (in_msg.Type == CoherenceRequestType:Inv) {
+                    DPRINTF(RubySlicc, "%s Received Inv from %s for %s\n", machineID, in_msg.Requestor,
+                            in_msg.addr);
                     trigger(Event:Inv, in_msg.addr, cache_entry, tbe);
                 } else if (in_msg.Type == CoherenceRequestType:PutAck) {
                     trigger(Event:PutAck, in_msg.addr, cache_entry, tbe);
@@ -342,6 +341,7 @@ machine(MachineType:L1Cache, "MSI cache")
                 out_msg.DataBlk := cache_entry.DataBlk;
                 out_msg.MessageSize := MessageSizeType:Data;
                 out_msg.Sender := machineID;
+                out_msg.Acks := in_msg.Acks;
             }
         }
     }
@@ -483,7 +483,9 @@ machine(MachineType:L1Cache, "MSI cache")
         popMandatoryQueue;
     }
 
-    transition(IS_D, {Load, Store, Replacement, Inv}) {
+    // This guy might become owner (if he is going to receive a DataExclusive)
+    // So he needs to stall FwdGetS and FwdGetM until he can satisfy the request
+    transition(IS_D, {Load, Store, FwdGetS, FwdGetM, Replacement, Inv}) {
         stall;
     }
 
@@ -553,7 +555,7 @@ machine(MachineType:L1Cache, "MSI cache")
         popForwardQueue;
     }
 
-    transition(SM_AD, DataDirAcks, SM_A) {
+    transition(SM_AD, {DataDirAcks, DataOwnerAcks}, SM_A) {
         writeDataToCache;
         storeAcks;
         popResponseQueue;

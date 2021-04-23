@@ -24,10 +24,11 @@ machine(MachineType:L1Cache, "MESI cache")
         SM_AD,  AccessPermission:Read_Only, desc="Shared, moving to M, waiting for acks and 'data'";
         SM_A,   AccessPermission:Read_Only, desc="Shared, moving to M, waiting for acks";
 
-        E,      AccessPermission:Read_Write, desc="Exclusive, on write is silently upgraded to M";
-        EI_A,   AccessPermission:Busy, desc="Exclusive going to invalidate, waiting for put ack";
+        E,      AccessPermission:Read_Only, desc="Exclusive, on write is silently upgraded to M";
 
         M,      AccessPermission:Read_Write, desc="Modified. Read & write permissions. Owner of block";
+
+        EI_A,   AccessPermission:Busy, desc="Exclusive going to invalidate, waiting for put ack";
         MI_A,   AccessPermission:Busy, desc="Was modified, moving to I, waiting for put ack";
         SI_A,   AccessPermission:Busy, desc="Was shared, moving to I, waiting for put ack";
         II_A,   AccessPermission:Invalid, desc="Sent valid data before receiving put ack. ";

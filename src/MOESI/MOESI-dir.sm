@@ -523,6 +523,12 @@ machine(MachineType:Directory, "Directory protocol")
         popRequestQueue;
     }
 
+    transition(O, PutEOwner, S) {
+        sendPutAck;
+        clearOwner;
+        popRequestQueue;
+    }
+
     transition({E, M}, GetS, O) {
         sendFwdGetS;
         addReqToSharers;

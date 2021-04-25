@@ -1,0 +1,23 @@
+Global frequency set at 1000000000000 ticks per second
+gem5 Simulator System.  http://gem5.org
+gem5 is copyrighted software; use the --copyright option for details.
+
+gem5 version 20.1.0.4
+gem5 compiled Apr 20 2021 17:26:03
+gem5 started Apr 21 2021 02:21:16
+gem5 executing on DESKTOP-V8CGH3I, pid 837
+command line: /home/ppetrica/Workspace/gem5/build/X86_MSI/gem5.opt /home/ppetrica/Workspace/gem5/configs/learning_gem5/part3/bench.py --bench sha-test --ncpus 4
+
+info: Standard input is not a terminal, disabling listeners.
+Beginning simulation!
+-  Info: Starting Run...
+-- Workload:sha-test=1050863061
+-- sha-test:time(ns)=610
+-- sha-test:contexts=4
+-- sha-test:iterations=10
+-- sha-test:time(secs)=    0.61
+-- sha-test:secs/workload=   0.061
+-- sha-test:workloads/sec= 16.3934
+-- Done:sha-test=1050863061
+Exiting @ tick 668818327000 because exiting with last active thread context
+Exiting @ tick 668818327000 because exiting with last active thread context

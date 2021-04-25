@@ -1,0 +1,23 @@
+Global frequency set at 1000000000000 ticks per second
+gem5 Simulator System.  http://gem5.org
+gem5 is copyrighted software; use the --copyright option for details.
+
+gem5 version 20.1.0.4
+gem5 compiled Apr 22 2021 11:55:25
+gem5 started Apr 22 2021 12:03:10
+gem5 executing on DESKTOP-V8CGH3I, pid 24690
+command line: /home/ppetrica/Workspace/gem5/build/X86_MI/gem5.opt /home/ppetrica/Workspace/gem5/configs/learning_gem5/part3/bench.py --bench zip-test --ncpus 4
+
+info: Standard input is not a terminal, disabling listeners.
+Beginning simulation!
+-  Info: Starting Run...
+-- Workload:zip-test=946108807
+-- zip-test:time(ns)=773
+-- zip-test:contexts=4
+-- zip-test:iterations=4
+-- zip-test:time(secs)=   0.773
+-- zip-test:secs/workload= 0.19325
+-- zip-test:workloads/sec= 5.17464
+-- Done:zip-test=946108807
+Exiting @ tick 43010125166000 because exiting with last active thread context
+Exiting @ tick 43010125166000 because exiting with last active thread context

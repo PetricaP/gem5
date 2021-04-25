@@ -1,0 +1,207 @@
+warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (512 Mbytes)
+warn: Sockets disabled, not accepting gdb connections
+warn: network.slave is deprecated. `slave` is now called `in_port`
+warn: requestToDir.master is deprecated. `master` is now called `out_port`
+warn: network.slave is deprecated. `slave` is now called `in_port`
+warn: responseToDirOrSibling.master is deprecated. `master` is now called `out_port`
+warn: network.master is deprecated. `master` is now called `out_port`
+warn: forwardFromDir.slave is deprecated. `slave` is now called `in_port`
+warn: network.master is deprecated. `master` is now called `out_port`
+warn: responseFromDirOrSibling.slave is deprecated. `slave` is now called `in_port`
+warn: network.slave is deprecated. `slave` is now called `in_port`
+warn: requestToDir.master is deprecated. `master` is now called `out_port`
+warn: network.slave is deprecated. `slave` is now called `in_port`
+warn: responseToDirOrSibling.master is deprecated. `master` is now called `out_port`
+warn: network.master is deprecated. `master` is now called `out_port`
+warn: forwardFromDir.slave is deprecated. `slave` is now called `in_port`
+warn: network.master is deprecated. `master` is now called `out_port`
+warn: responseFromDirOrSibling.slave is deprecated. `slave` is now called `in_port`
+warn: network.slave is deprecated. `slave` is now called `in_port`
+warn: requestToDir.master is deprecated. `master` is now called `out_port`
+warn: network.slave is deprecated. `slave` is now called `in_port`
+warn: responseToDirOrSibling.master is deprecated. `master` is now called `out_port`
+warn: network.master is deprecated. `master` is now called `out_port`
+warn: forwardFromDir.slave is deprecated. `slave` is now called `in_port`
+warn: network.master is deprecated. `master` is now called `out_port`
+warn: responseFromDirOrSibling.slave is deprecated. `slave` is now called `in_port`
+warn: network.slave is deprecated. `slave` is now called `in_port`
+warn: requestToDir.master is deprecated. `master` is now called `out_port`
+warn: network.slave is deprecated. `slave` is now called `in_port`
+warn: responseToDirOrSibling.master is deprecated. `master` is now called `out_port`
+warn: network.master is deprecated. `master` is now called `out_port`
+warn: forwardFromDir.slave is deprecated. `slave` is now called `in_port`
+warn: network.master is deprecated. `master` is now called `out_port`
+warn: responseFromDirOrSibling.slave is deprecated. `slave` is now called `in_port`
+warn: None.memory is deprecated. The request port for Ruby memory output to the main memory is now called `memory_out_port`
+warn: network.master is deprecated. `master` is now called `out_port`
+warn: requestFromCache.slave is deprecated. `slave` is now called `in_port`
+warn: network.master is deprecated. `master` is now called `out_port`
+warn: responseFromCache.slave is deprecated. `slave` is now called `in_port`
+warn: network.slave is deprecated. `slave` is now called `in_port`
+warn: responseToCache.master is deprecated. `master` is now called `out_port`
+warn: network.slave is deprecated. `slave` is now called `in_port`
+warn: forwardToCache.master is deprecated. `master` is now called `out_port`
+warn: sys_port_proxy.slave is deprecated. `slave` is now called `in_port`
+warn: sequencers0.slave is deprecated. `slave` is now called `in_port`
+warn: sequencers0.slave is deprecated. `slave` is now called `in_port`
+warn: sequencers0.master is deprecated. `master` is now called `interrupt_out_port`
+warn: sequencers0.slave is deprecated. `slave` is now called `in_port`
+warn: interrupts.int_master is deprecated. `int_master` is now called `int_requestor`
+warn: sequencers0.master is deprecated. `master` is now called `interrupt_out_port`
+warn: interrupts.int_slave is deprecated. `int_slave` is now called `int_responder`
+warn: sequencers0.slave is deprecated. `slave` is now called `in_port`
+warn: sequencers0.slave is deprecated. `slave` is now called `in_port`
+warn: sequencers1.slave is deprecated. `slave` is now called `in_port`
+warn: sequencers1.slave is deprecated. `slave` is now called `in_port`
+warn: sequencers1.master is deprecated. `master` is now called `interrupt_out_port`
+warn: sequencers1.slave is deprecated. `slave` is now called `in_port`
+warn: interrupts.int_master is deprecated. `int_master` is now called `int_requestor`
+warn: sequencers1.master is deprecated. `master` is now called `interrupt_out_port`
+warn: interrupts.int_slave is deprecated. `int_slave` is now called `int_responder`
+warn: sequencers1.slave is deprecated. `slave` is now called `in_port`
+warn: sequencers1.slave is deprecated. `slave` is now called `in_port`
+warn: sequencers2.slave is deprecated. `slave` is now called `in_port`
+warn: sequencers2.slave is deprecated. `slave` is now called `in_port`
+warn: sequencers2.master is deprecated. `master` is now called `interrupt_out_port`
+warn: sequencers2.slave is deprecated. `slave` is now called `in_port`
+warn: interrupts.int_master is deprecated. `int_master` is now called `int_requestor`
+warn: sequencers2.master is deprecated. `master` is now called `interrupt_out_port`
+warn: interrupts.int_slave is deprecated. `int_slave` is now called `int_responder`
+warn: sequencers2.slave is deprecated. `slave` is now called `in_port`
+warn: sequencers2.slave is deprecated. `slave` is now called `in_port`
+warn: sequencers3.slave is deprecated. `slave` is now called `in_port`
+warn: sequencers3.slave is deprecated. `slave` is now called `in_port`
+warn: sequencers3.master is deprecated. `master` is now called `interrupt_out_port`
+warn: sequencers3.slave is deprecated. `slave` is now called `in_port`
+warn: interrupts.int_master is deprecated. `int_master` is now called `int_requestor`
+warn: sequencers3.master is deprecated. `master` is now called `interrupt_out_port`
+warn: interrupts.int_slave is deprecated. `int_slave` is now called `int_responder`
+warn: sequencers3.slave is deprecated. `slave` is now called `in_port`
+warn: sequencers3.slave is deprecated. `slave` is now called `in_port`
+warn: system.caches.network adopting orphan SimObject param 'int_links'
+warn: No dot file generated. Please install pydot to generate the dot file and pdf.
+info: Entering event queue @ 0.  Starting simulation...
+warn: Replacement policy updates recently became the responsibility of SLICC state machines. Make sure to setMRU() near callbacks in .sm files!
+warn: ignoring syscall set_robust_list(...)
+warn: ignoring syscall rt_sigaction(...)
+      (further warnings will be suppressed)
+warn: ignoring syscall rt_sigprocmask(...)
+      (further warnings will be suppressed)
+info: Increasing stack size by one page.
+warn: ignoring syscall mprotect(...)
+warn: MOVNTDQ: Ignoring non-temporal hint, modeling as cacheable!
+warn: ignoring syscall mprotect(...)
+warn: PowerState: Already in the requested power state, request ignored
+warn: ignoring syscall set_robust_list(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall set_robust_list(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall set_robust_list(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+panic: Invalid transition
+system.caches.controllers2 time: 2520642413 addr: 0x126f40 event: FwdGetS state: IS_D
+Memory Usage: 901352 KBytes
+Program aborted at tick 2520642413000
+--- BEGIN LIBC BACKTRACE ---
+/home/ppetrica/Workspace/gem5/build/X86_MESI/gem5.opt(+0xc3bfd0)[0x559bd3e90fd0]
+/home/ppetrica/Workspace/gem5/build/X86_MESI/gem5.opt(+0xc5050e)[0x559bd3ea550e]
+/lib/x86_64-linux-gnu/libpthread.so.0(+0x153c0)[0x7fa826a823c0]
+/lib/x86_64-linux-gnu/libc.so.6(gsignal+0xcb)[0x7fa82605e18b]
+/lib/x86_64-linux-gnu/libc.so.6(abort+0x12b)[0x7fa82603d859]
+/home/ppetrica/Workspace/gem5/build/X86_MESI/gem5.opt(+0xd15d30)[0x559bd3f6ad30]
+/home/ppetrica/Workspace/gem5/build/X86_MESI/gem5.opt(+0xd16802)[0x559bd3f6b802]
+/home/ppetrica/Workspace/gem5/build/X86_MESI/gem5.opt(+0xd19b20)[0x559bd3f6eb20]
+/home/ppetrica/Workspace/gem5/build/X86_MESI/gem5.opt(+0xc44049)[0x559bd3e99049]
+/home/ppetrica/Workspace/gem5/build/X86_MESI/gem5.opt(+0xc65bd8)[0x559bd3ebabd8]
+/home/ppetrica/Workspace/gem5/build/X86_MESI/gem5.opt(+0xc669cd)[0x559bd3ebb9cd]
+/home/ppetrica/Workspace/gem5/build/X86_MESI/gem5.opt(+0x81fe40)[0x559bd3a74e40]
+/home/ppetrica/Workspace/gem5/build/X86_MESI/gem5.opt(+0x4a71dc)[0x559bd36fc1dc]
+/lib/x86_64-linux-gnu/libpython3.8.so.1.0(+0x2a8408)[0x7fa826d38408]
+/lib/x86_64-linux-gnu/libpython3.8.so.1.0(_PyEval_EvalFrameDefault+0x8dd8)[0x7fa826b0df48]
+/lib/x86_64-linux-gnu/libpython3.8.so.1.0(_PyEval_EvalCodeWithName+0x8fb)[0x7fa826c5ad3b]
+/lib/x86_64-linux-gnu/libpython3.8.so.1.0(_PyFunction_Vectorcall+0x94)[0x7fa826d37de4]
+/lib/x86_64-linux-gnu/libpython3.8.so.1.0(+0x74d6d)[0x7fa826b04d6d]
+/lib/x86_64-linux-gnu/libpython3.8.so.1.0(_PyEval_EvalFrameDefault+0x7d86)[0x7fa826b0cef6]
+/lib/x86_64-linux-gnu/libpython3.8.so.1.0(_PyEval_EvalCodeWithName+0x8fb)[0x7fa826c5ad3b]
+/lib/x86_64-linux-gnu/libpython3.8.so.1.0(PyEval_EvalCodeEx+0x42)[0x7fa826c5b0c2]
+/lib/x86_64-linux-gnu/libpython3.8.so.1.0(PyEval_EvalCode+0x1f)[0x7fa826c5b4af]
+/lib/x86_64-linux-gnu/libpython3.8.so.1.0(+0x1cfaa1)[0x7fa826c5faa1]
+/lib/x86_64-linux-gnu/libpython3.8.so.1.0(+0x25f3a7)[0x7fa826cef3a7]
+/lib/x86_64-linux-gnu/libpython3.8.so.1.0(+0x74d6d)[0x7fa826b04d6d]
+/lib/x86_64-linux-gnu/libpython3.8.so.1.0(_PyEval_EvalFrameDefault+0x12fd)[0x7fa826b0646d]
+/lib/x86_64-linux-gnu/libpython3.8.so.1.0(_PyEval_EvalCodeWithName+0x8fb)[0x7fa826c5ad3b]
+/lib/x86_64-linux-gnu/libpython3.8.so.1.0(_PyFunction_Vectorcall+0x94)[0x7fa826d37de4]
+/lib/x86_64-linux-gnu/libpython3.8.so.1.0(+0x74d6d)[0x7fa826b04d6d]
+/lib/x86_64-linux-gnu/libpython3.8.so.1.0(_PyEval_EvalFrameDefault+0x7d86)[0x7fa826b0cef6]
+/lib/x86_64-linux-gnu/libpython3.8.so.1.0(_PyEval_EvalCodeWithName+0x8fb)[0x7fa826c5ad3b]
+/lib/x86_64-linux-gnu/libpython3.8.so.1.0(PyEval_EvalCodeEx+0x42)[0x7fa826c5b0c2]
+--- END LIBC BACKTRACE ---

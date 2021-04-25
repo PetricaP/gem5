@@ -1,0 +1,38 @@
+warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (512 Mbytes)
+panic: panic condition fd < 0 occurred: Failed to open file /home/ppetrica/Workspace/gem5/configs/learning_gem5/part3/../../../tests/coremark-pro/builds/linux64/gcc64/bin/data.exe.
+Memory Usage: 617576 KBytes
+Program aborted at tick 0
+--- BEGIN LIBC BACKTRACE ---
+/home/ppetrica/Workspace/gem5/build/X86_MESI/gem5.opt(+0xc3bfd0)[0x55fcea7c2fd0]
+/home/ppetrica/Workspace/gem5/build/X86_MESI/gem5.opt(+0xc5050e)[0x55fcea7d750e]
+/lib/x86_64-linux-gnu/libpthread.so.0(+0x153c0)[0x7f7f474b73c0]
+/lib/x86_64-linux-gnu/libc.so.6(gsignal+0xcb)[0x7f7f46a9318b]
+/lib/x86_64-linux-gnu/libc.so.6(abort+0x12b)[0x7f7f46a72859]
+/home/ppetrica/Workspace/gem5/build/X86_MESI/gem5.opt(+0x2ceeb5)[0x55fce9e55eb5]
+/home/ppetrica/Workspace/gem5/build/X86_MESI/gem5.opt(+0xb4c8eb)[0x55fcea6d38eb]
+/home/ppetrica/Workspace/gem5/build/X86_MESI/gem5.opt(+0xb4cf96)[0x55fcea6d3f96]
+/home/ppetrica/Workspace/gem5/build/X86_MESI/gem5.opt(+0xc914bc)[0x55fcea8184bc]
+/home/ppetrica/Workspace/gem5/build/X86_MESI/gem5.opt(+0x9b7e23)[0x55fcea53ee23]
+/home/ppetrica/Workspace/gem5/build/X86_MESI/gem5.opt(+0x4a71dc)[0x55fcea02e1dc]
+/lib/x86_64-linux-gnu/libpython3.8.so.1.0(+0x2a8408)[0x7f7f4776d408]
+/lib/x86_64-linux-gnu/libpython3.8.so.1.0(_PyObject_MakeTpCall+0xab)[0x7f7f4776d7db]
+/lib/x86_64-linux-gnu/libpython3.8.so.1.0(+0x2a8aa0)[0x7f7f4776daa0]
+/lib/x86_64-linux-gnu/libpython3.8.so.1.0(+0x74d6d)[0x7f7f47539d6d]
+/lib/x86_64-linux-gnu/libpython3.8.so.1.0(_PyEval_EvalFrameDefault+0x7d86)[0x7f7f47541ef6]
+/lib/x86_64-linux-gnu/libpython3.8.so.1.0(+0x8006b)[0x7f7f4754506b]
+/lib/x86_64-linux-gnu/libpython3.8.so.1.0(+0x2a8a6a)[0x7f7f4776da6a]
+/lib/x86_64-linux-gnu/libpython3.8.so.1.0(+0x74d6d)[0x7f7f47539d6d]
+/lib/x86_64-linux-gnu/libpython3.8.so.1.0(_PyEval_EvalFrameDefault+0x7d86)[0x7f7f47541ef6]
+/lib/x86_64-linux-gnu/libpython3.8.so.1.0(+0x8006b)[0x7f7f4754506b]
+/lib/x86_64-linux-gnu/libpython3.8.so.1.0(+0x2a8a6a)[0x7f7f4776da6a]
+/lib/x86_64-linux-gnu/libpython3.8.so.1.0(+0x74d6d)[0x7f7f47539d6d]
+/lib/x86_64-linux-gnu/libpython3.8.so.1.0(_PyEval_EvalFrameDefault+0x7d86)[0x7f7f47541ef6]
+/lib/x86_64-linux-gnu/libpython3.8.so.1.0(_PyEval_EvalCodeWithName+0x8fb)[0x7f7f4768fd3b]
+/lib/x86_64-linux-gnu/libpython3.8.so.1.0(_PyFunction_Vectorcall+0x94)[0x7f7f4776cde4]
+/lib/x86_64-linux-gnu/libpython3.8.so.1.0(+0x74d6d)[0x7f7f47539d6d]
+/lib/x86_64-linux-gnu/libpython3.8.so.1.0(_PyEval_EvalFrameDefault+0x12fd)[0x7f7f4753b46d]
+/lib/x86_64-linux-gnu/libpython3.8.so.1.0(+0x8006b)[0x7f7f4754506b]
+/lib/x86_64-linux-gnu/libpython3.8.so.1.0(+0x74d6d)[0x7f7f47539d6d]
+/lib/x86_64-linux-gnu/libpython3.8.so.1.0(_PyEval_EvalFrameDefault+0xea8)[0x7f7f4753b018]
+/lib/x86_64-linux-gnu/libpython3.8.so.1.0(+0x8006b)[0x7f7f4754506b]
+--- END LIBC BACKTRACE ---

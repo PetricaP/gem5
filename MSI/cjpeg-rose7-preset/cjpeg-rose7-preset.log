@@ -1,0 +1,44 @@
+Global frequency set at 1000000000000 ticks per second
+gem5 Simulator System.  http://gem5.org
+gem5 is copyrighted software; use the --copyright option for details.
+
+gem5 version 20.1.0.4
+gem5 compiled Apr 20 2021 17:26:03
+gem5 started Apr 21 2021 02:21:16
+gem5 executing on DESKTOP-V8CGH3I, pid 797
+command line: /home/ppetrica/Workspace/gem5/build/X86_MSI/gem5.opt /home/ppetrica/Workspace/gem5/configs/learning_gem5/part3/bench.py --bench cjpeg-rose7-preset --ncpus 4
+
+info: Standard input is not a terminal, disabling listeners.
+Beginning simulation!
+Rose256.bmp data supplied by C array
+>> Data Set                 : Rose256.bmp
+>> Output File              : Rose256.jpg
+Rose256.bmp data supplied by C array
+>> Data Set                 : Rose256.bmp
+>> Output File              : Rose256.jpg
+Rose256.bmp data supplied by C array
+>> Data Set                 : Rose256.bmp
+>> Output File              : Rose256.jpg
+Rose256.bmp data supplied by C array
+>> Data Set                 : Rose256.bmp
+>> Output File              : Rose256.jpg
+Rose256.bmp data supplied by C array
+>> Data Set                 : Rose256.bmp
+>> Output File              : Rose256.jpg
+Rose256.bmp data supplied by C array
+>> Data Set                 : Rose256.bmp
+>> Output File              : Rose256.jpg
+Rose256.bmp data supplied by C array
+>> Data Set                 : Rose256.bmp
+>> Output File              : Rose256.jpg
+-  Info: Starting Run...
+-- Workload:cjpeg-rose7-preset=236760500
+-- cjpeg-rose7-preset:time(ns)=448
+-- cjpeg-rose7-preset:contexts=4
+-- cjpeg-rose7-preset:iterations=10
+-- cjpeg-rose7-preset:time(secs)=   0.448
+-- cjpeg-rose7-preset:secs/workload=  0.0448
+-- cjpeg-rose7-preset:workloads/sec= 22.3214
+-- Done:cjpeg-rose7-preset=236760500
+Exiting @ tick 449159453000 because exiting with last active thread context
+Exiting @ tick 449159453000 because exiting with last active thread context

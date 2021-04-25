@@ -1,0 +1,23 @@
+Global frequency set at 1000000000000 ticks per second
+gem5 Simulator System.  http://gem5.org
+gem5 is copyrighted software; use the --copyright option for details.
+
+gem5 version 20.1.0.4
+gem5 compiled Apr 22 2021 11:55:25
+gem5 started Apr 22 2021 12:03:10
+gem5 executing on DESKTOP-V8CGH3I, pid 24680
+command line: /home/ppetrica/Workspace/gem5/build/X86_MI/gem5.opt /home/ppetrica/Workspace/gem5/configs/learning_gem5/part3/bench.py --bench radix2-big-64k --ncpus 4
+
+info: Standard input is not a terminal, disabling listeners.
+Beginning simulation!
+-  Info: Starting Run...
+-- Workload:radix2-big-64k=1862946660
+-- radix2-big-64k:time(ns)=29536
+-- radix2-big-64k:contexts=4
+-- radix2-big-64k:iterations=1000
+-- radix2-big-64k:time(secs)=  29.536
+-- radix2-big-64k:secs/workload=0.029536
+-- radix2-big-64k:workloads/sec=  33.857
+-- Done:radix2-big-64k=1862946660
+Exiting @ tick 29571414493000 because exiting with last active thread context
+Exiting @ tick 29571414493000 because exiting with last active thread context

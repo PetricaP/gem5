@@ -1,0 +1,23 @@
+Global frequency set at 1000000000000 ticks per second
+gem5 Simulator System.  http://gem5.org
+gem5 is copyrighted software; use the --copyright option for details.
+
+gem5 version 20.1.0.4
+gem5 compiled Apr 22 2021 11:55:25
+gem5 started Apr 22 2021 12:03:10
+gem5 executing on DESKTOP-V8CGH3I, pid 24670
+command line: /home/ppetrica/Workspace/gem5/build/X86_MI/gem5.opt /home/ppetrica/Workspace/gem5/configs/learning_gem5/part3/bench.py --bench nnet_test --ncpus 4
+
+info: Standard input is not a terminal, disabling listeners.
+Beginning simulation!
+-  Info: Starting Run...
+-- Workload:nnet_test=549578576
+-- nnet_test:time(ns)=24321
+-- nnet_test:contexts=4
+-- nnet_test:iterations=10
+-- nnet_test:time(secs)=  24.321
+-- nnet_test:secs/workload=  2.4321
+-- nnet_test:workloads/sec=0.411167
+-- Done:nnet_test=549578576
+Exiting @ tick 24322350532000 because exiting with last active thread context
+Exiting @ tick 24322350532000 because exiting with last active thread context

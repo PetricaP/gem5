@@ -1,0 +1,22 @@
+Global frequency set at 1000000000000 ticks per second
+gem5 Simulator System.  http://gem5.org
+gem5 is copyrighted software; use the --copyright option for details.
+
+gem5 version 20.1.0.4
+gem5 compiled May  9 2021 15:21:52
+gem5 started May 10 2021 13:31:13
+gem5 executing on DESKTOP-JT1TNOL, pid 20286
+command line: ../../build/X86_MESI/gem5.opt ../../configs/learning_gem5/part3/bench.py --bench core --ncpus 4
+
+Beginning simulation!
+-  Info: Starting Run...
+-- Workload:core=490760323
+-- core:time(ns)=29377
+-- core:contexts=4
+-- core:iterations=4
+-- core:time(secs)=  29.377
+-- core:secs/workload= 7.34425
+-- core:workloads/sec=0.136161
+-- Done:core=490760323
+Exiting @ tick 29378622339000 because exiting with last active thread context
+Exiting @ tick 29378622339000 because exiting with last active thread context

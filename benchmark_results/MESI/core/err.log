@@ -1,5 +1,8 @@
 warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (512 Mbytes)
-warn: Sockets disabled, not accepting gdb connections
+0: system.remote_gdb: listening for remote gdb on port 7000
+0: system.remote_gdb: listening for remote gdb on port 7001
+0: system.remote_gdb: listening for remote gdb on port 7002
+0: system.remote_gdb: listening for remote gdb on port 7003
 warn: network.slave is deprecated. `slave` is now called `in_port`
 warn: requestToDir.master is deprecated. `master` is now called `out_port`
 warn: network.slave is deprecated. `slave` is now called `in_port`
@@ -82,24 +85,31 @@ warn: system.caches.network adopting orphan SimObject param 'int_links'
 warn: No dot file generated. Please install pydot to generate the dot file and pdf.
 info: Entering event queue @ 0.  Starting simulation...
 warn: Replacement policy updates recently became the responsibility of SLICC state machines. Make sure to setMRU() near callbacks in .sm files!
+warn: ignoring syscall access(...)
+info: Increasing stack size by one page.
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
+warn: ignoring syscall mprotect(...)
 warn: ignoring syscall set_robust_list(...)
 warn: ignoring syscall rt_sigaction(...)
       (further warnings will be suppressed)
 warn: ignoring syscall rt_sigprocmask(...)
       (further warnings will be suppressed)
-info: Increasing stack size by one page.
-warn: ignoring syscall mprotect(...)
 warn: ignoring syscall mprotect(...)
 warn: PowerState: Already in the requested power state, request ignored
-warn: ignoring syscall set_robust_list(...)
-warn: ignoring syscall mprotect(...)
 warn: ignoring syscall mprotect(...)
 warn: ignoring syscall set_robust_list(...)
+warn: ignoring syscall set_robust_list(...)
+warn: ignoring syscall mprotect(...)
 warn: ignoring syscall mprotect(...)
 warn: ignoring syscall mprotect(...)
 warn: ignoring syscall mprotect(...)
 warn: ignoring syscall set_robust_list(...)
 warn: ignoring syscall mprotect(...)
 warn: MOVNTDQ: Ignoring non-temporal hint, modeling as cacheable!
+warn: ignoring syscall madvise(...)
 warn: ignoring syscall madvise(...)
 warn: ignoring syscall madvise(...)

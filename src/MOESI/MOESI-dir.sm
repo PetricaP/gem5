@@ -416,7 +416,7 @@ machine(MachineType:Directory, "Directory protocol")
         popRequestQueue;
     }
 
-    transition(I, {PutSNotLast, PutSLast, PutMNonOwner, PutONonOwner}) {
+    transition(I, {PutSNotLast, PutSLast, PutMNonOwner, PutONonOwner, PutENonOwner}) {
         sendPutAck;
         popRequestQueue;
     }
@@ -510,7 +510,7 @@ machine(MachineType:Directory, "Directory protocol")
         popMemQueue;
     }
 
-    transition(O, {PutMNonOwner, PutONonOwner}) {
+    transition(O, {PutMNonOwner, PutONonOwner, PutENonOwner}) {
         removeReqFromSharers;
         sendPutAck;
         popRequestQueue;

@@ -438,7 +438,7 @@ machine(MachineType:Directory, "Directory protocol")
         popRequestQueue;
     }
 
-    transition({E, E_m, EI_m, M, M_m, MI_m}, {PutSNotLast, PutSLast, PutMNonOwner}) {
+    transition({E, E_m, EI_m, M, M_m, MI_m}, {PutSNotLast, PutSLast, PutMNonOwner, PutENonOwner}) {
         sendPutAck;
         popRequestQueue;
     }

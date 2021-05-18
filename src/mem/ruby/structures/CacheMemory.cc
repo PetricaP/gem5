@@ -534,6 +534,11 @@ CacheMemory::regStats()
         .desc("Number of cache demand misses")
         ;
 
+    m_stalls
+        .name(name() + ".stalls")
+        .desc("Number of stalls during execution")
+        ;
+
     m_demand_accesses
         .name(name() + ".demand_accesses")
         .desc("Number of cache demand accesses")

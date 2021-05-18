@@ -46,6 +46,7 @@ from m5.defines import buildEnv
 from m5.util import addToPath, fatal
 
 addToPath('../')
+addToPath('../../')
 
 from common import ObjectList
 from common import MemConfig

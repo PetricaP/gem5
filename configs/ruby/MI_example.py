@@ -42,7 +42,6 @@ def define_options(parser):
 
 def create_system(options, full_system, system, dma_ports, bootmem,
                   ruby_system):
-
     if buildEnv['PROTOCOL'] != 'MI_example':
         panic("This script requires the MI_example protocol to be built.")
 

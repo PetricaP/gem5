@@ -10,7 +10,7 @@ machine(MachineType:L1Cache, "MESI cache")
     MessageBuffer *responseToDirOrSibling, network="To", virtual_network="2", vnet_type="response";
 
     MessageBuffer *forwardFromDir, network="From", virtual_network="1", vnet_type="forward";
-    MessageBuffer * responseFromDirOrSibling, network="From", virtual_network="2", vnet_type="response";
+    MessageBuffer *responseFromDirOrSibling, network="From", virtual_network="2", vnet_type="response";
 
     MessageBuffer *mandatoryQueue;
 {
@@ -149,7 +149,7 @@ machine(MachineType:L1Cache, "MESI cache")
     out_port(request_out, RequestMsg, requestToDir);
     out_port(response_out, ResponseMsg, responseToDirOrSibling);
 
-    in_port(response_in, ResponseMsg, responseFromDirOrSibling) {
+    in_port(response_in, ResponseMsg, responseFromDirOrSibling, rank=2) {
         if (response_in.isReady(clockEdge())) {
             peek(response_in, ResponseMsg) {
                 Entry cache_entry := getCacheEntry(in_msg.addr);
@@ -194,7 +194,7 @@ machine(MachineType:L1Cache, "MESI cache")
         }
     }
 
-    in_port(forward_in, RequestMsg, forwardFromDir) {
+    in_port(forward_in, RequestMsg, forwardFromDir, rank=1) {
         if (forward_in.isReady(clockEdge())) {
             peek(forward_in, RequestMsg) {
                 Entry cache_entry := getCacheEntry(in_msg.addr);
@@ -215,7 +215,7 @@ machine(MachineType:L1Cache, "MESI cache")
         }
     }
 
-    in_port(mandatory_in, RubyRequest, mandatoryQueue) {
+    in_port(mandatory_in, RubyRequest, mandatoryQueue, rank=0) {
         if (mandatory_in.isReady(clockEdge())) {
             peek(mandatory_in, RubyRequest, block_on="LineAddress") {
                 Entry cache_entry := getCacheEntry(in_msg.LineAddress);
@@ -593,5 +593,10 @@ machine(MachineType:L1Cache, "MESI cache")
     transition(SI_A, Inv, II_A) {
         sendInvAcktoReq;
         popForwardQueue;
+    }
+
+    /* This is necessary because an ordering bug in gem5 I think */
+    transition(IS_D, FwdGetS) {
+        stall;
     }
 }

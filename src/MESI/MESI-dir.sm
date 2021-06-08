@@ -113,8 +113,8 @@ machine(MachineType:Directory, "Directory protocol")
         }
     }
 
-    out_port(forward_out, RequestMsg, forwardToCache);
     out_port(response_out, ResponseMsg, responseToCache);
+    out_port(forward_out, RequestMsg, forwardToCache);
     out_port(memQueue_out, MemoryMsg, requestToMemory);
 
     in_port(memQueue_in, MemoryMsg, responseFromMemory) {
@@ -224,6 +224,7 @@ machine(MachineType:Directory, "Directory protocol")
 
     action(addReqToSharers, "aS", desc="Add requestor to sharer list") {
         peek(request_in, RequestMsg) {
+            DPRINTF(RubySlicc, "Adding %s to sharers", in_msg.Requestor);
             getDirectoryEntry(address).Sharers.add(in_msg.Requestor);
         }
     }
@@ -266,6 +267,27 @@ machine(MachineType:Directory, "Directory protocol")
         }
     }
 
+    action(sendExclusiveDataToReq, "ed", desc="Send data from memory to requestor. ") {
+        peek(memQueue_in, MemoryMsg) {
+            enqueue(response_out, ResponseMsg, 1) {
+                DPRINTF(RubySlicc, "Sending exclusive data to %s", in_msg.OriginalRequestorMachId);
+                out_msg.addr := address;
+                out_msg.Type := CoherenceResponseType:DataExclusive;
+                out_msg.Sender := machineID;
+                out_msg.Destination.add(in_msg.OriginalRequestorMachId);
+                out_msg.DataBlk := in_msg.DataBlk;
+                out_msg.MessageSize := MessageSizeType:Data;
+                Entry e := getDirectoryEntry(address);
+                if (e.Owner.isElement(in_msg.OriginalRequestorMachId)) {
+                    out_msg.Acks := e.Sharers.count();
+                } else {
+                    out_msg.Acks := 0;
+                }
+                assert(out_msg.Acks >= 0);
+            }
+        }
+    }
+
     action(sendFwdGetS, "fS", desc="Send forward getS to owner") {
         assert(getDirectoryEntry(address).Owner.count() == 1);
         peek(request_in, RequestMsg) {
@@ -297,26 +319,6 @@ machine(MachineType:Directory, "Directory protocol")
             enqueue(response_out, ResponseMsg, 1) {
                 out_msg.addr := address;
                 out_msg.Type := CoherenceResponseType:Data;
-                out_msg.Sender := machineID;
-                out_msg.Destination.add(in_msg.OriginalRequestorMachId);
-                out_msg.DataBlk := in_msg.DataBlk;
-                out_msg.MessageSize := MessageSizeType:Data;
-                Entry e := getDirectoryEntry(address);
-                if (e.Owner.isElement(in_msg.OriginalRequestorMachId)) {
-                    out_msg.Acks := e.Sharers.count();
-                } else {
-                    out_msg.Acks := 0;
-                }
-                assert(out_msg.Acks >= 0);
-            }
-        }
-    }
-
-    action(sendExclusiveDataToReq, "ed", desc="Send data from memory to requestor. ") {
-        peek(memQueue_in, MemoryMsg) {
-            enqueue(response_out, ResponseMsg, 1) {
-                out_msg.addr := address;
-                out_msg.Type := CoherenceResponseType:DataExclusive;
                 out_msg.Sender := machineID;
                 out_msg.Destination.add(in_msg.OriginalRequestorMachId);
                 out_msg.DataBlk := in_msg.DataBlk;
